@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:s3="http://www.mulesoft.org/schema/mule/s3"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="86b01a13-7e09-423a-9ac2-526383cc6901" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<s3:config name="Amazon_S3_Configuration" doc:name="Amazon S3 Configuration" doc:id="3bb61649-8540-4df8-8327-c00215819359" >
+		<s3:basic-connection accessKey="AKIAIQYKKP3BNODSGSQQ" secretKey="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" />
+	</s3:config>
+	<flow name="s3Flow" doc:id="487f9c8b-03d1-43fa-9f9c-617eaeee1f12" >
+		<http:listener doc:name="Listener" doc:id="f2b02cdf-5b4a-4ea8-a60b-a9d396059fb8" config-ref="HTTP_Listener_config" path="/s3connector"/>
+		<s3:create-bucket doc:name="Create bucket" doc:id="d87e2773-f8c3-41e4-9c2d-e839f6409a3a" config-ref="Amazon_S3_Configuration" bucketName="mybuc123" region="US_WEST_2" acl="PUBLIC_READ_WRITE"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="3f0698a0-0bfc-4b36-a5b8-104180c2ca53" />
+	</flow>
+	<flow name="s3Flow1" doc:id="3f1994c0-6509-4a01-864a-5fe2e46f5672" >
+		<http:listener doc:name="Listener" doc:id="637074ad-2c31-4443-9a54-122868adb10a" config-ref="HTTP_Listener_config" path="/"/>
+		<file:read doc:name="Read" doc:id="bc32ddf6-3cdd-4a5d-be1f-3366cc9cc4ff" path="C:/gitDemo/seble.json"/>
+		<s3:create-object doc:name="Create object" doc:id="c4cc546b-013c-4ca0-9c8b-dc06448a3abe" config-ref="Amazon_S3_Configuration" key="msg11.xml" bucketName="mybuc123"/>
+	</flow>
+</mule>
